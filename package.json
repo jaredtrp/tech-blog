@@ -1,0 +1,28 @@
+{
+  "dependencies": {
+    "bcrypt": "^5.0.1",
+    "dotenv": "^16.0.0",
+    "express": "^4.17.2",
+    "express-handlebars": "^6.0.2",
+    "mysql2": "^2.3.3",
+    "path": "^0.12.7",
+    "sequelize": "^6.16.1"
+  },
+  "scripts": {
+    "start": "node server.js"
+  },
+  "name": "just-tech-news",
+  "version": "1.0.0",
+  "main": "server.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jaredtrp/just-tech-news.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/jaredtrp/just-tech-news/issues"
+  },
+  "homepage": "https://github.com/jaredtrp/just-tech-news#readme",
+  "description": ""
+}
