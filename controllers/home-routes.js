@@ -1,80 +1,88 @@
 const router = require('express').Router();
 const sequelize = require('../config/connection');
-const { Post, User, Comment } = require('../models');
+const { Blog, User, Comment } = require('../models');
 
 router.get('/', (req, res) => {
-  console.log('=======================');
-  Post.findAll({
-    attributes: ['id', 'title', 'contents', 'created_at'],
-    include: [
-      {
-        model: Comment,
-        attributes: ['id', 'comment_text', 'post_id', 'user_id', 'created_at'],
-        include: {
-          model: User,
-          attributes: ['username'],
+  console.log(req.session);
+    Blog.findAll({
+      attributes: [
+        'id',
+        'blog_text',
+        'title',
+        'createdAt'
+      ],
+      include: [
+        {
+          model: Comment,
+          attributes: ['id', 'comment_text', 'Blog_id', 'user_id', 'createdAt'],
+          include: {
+            model: User,
+            attributes: ['username']
+          }
         },
-      },
-      {
-        model: User,
-        attributes: ['username'],
-      },
-    ],
-  })
-    .then(dbPostData => {
-      //pass a single post object into the homepage template
-      const posts = dbPostData.map(post => post.get({ plain: true }));
-      res.render('homepage', {
-        posts,
-        loggedIn: req.session.loggedIn,
-      });
+        {
+          model: User,
+          attributes: ['username']
+        }
+      ]
     })
-    .catch(err => {
-      console.log(err);
-      res.status(500).json(err);
-    });
+      .then(dbBlogData => {
+        // pass a single Blog object into the homepage template
+        const Blogs = dbBlogData.map(Blog => Blog.get({ plain: true }));
+        
+        res.render('homepage', { 
+          Blogs,
+          loggedIn: req.session.loggedIn
+       });
+      })
+      .catch(err => {
+        console.log(err);
+        res.status(500).json(err);
+      });
 });
 
-router.get('/post/:id', (req, res) => {
-  Post.findOne({
+router.get('/Blog/:id', (req, res) => {
+  Blog.findOne({
     where: {
-      id: req.params.id,
+      id: req.params.id
     },
-    attributes: ['id', 'title', 'contents', 'created_at'],
     include: [
       {
         model: Comment,
-        attributes: ['id', 'comment_text', 'post_id', 'user_id', 'created_at'],
+        attributes: ['id', 'comment_text', 'Blog_id', 'createdAt'],
         include: {
           model: User,
-          attributes: ['username'],
-        },
+          attributes: ['username']
+        }
       },
       {
         model: User,
-        attributes: ['username'],
-      },
-    ],
-  })
-    .then(dbPostData => {
-      if (!dbPostData) {
-        res.status(404).json({ message: 'No post found with this id' });
-        return;
+        attributes: ['username']
       }
+    ]
+  })
+  .then(dbBlogData => {
+    if (!dbBlogData) {
+      res.status(404).json({ message: 'No Blog found with this id' });
+      return;
+    }
 
-      // serialize the data
-      const post = dbPostData.get({ plain: true });
+    // serialize the data
+    const Blog = dbBlogData.get({ plain: true });
+    console.log(Blog);
 
-      // pass data to template
-      res.render('single-post', {
-        post,
-        loggedIn: req.session.loggedIn,
-      });
-    })
-    .catch(err => {
-      console.log(err);
-      res.status(500).json(err);
-    });
+    // pass data to template
+    res.render('single-blog', {
+      Blog,
+      loggedIn: req.session.loggedIn
+   });
+
+  })
+  .catch(err => {
+    console.log(err);
+    res.status(500).json(err);
+  });
+
 });
 
 router.get('/login', (req, res) => {
@@ -82,16 +90,22 @@ router.get('/login', (req, res) => {
     res.redirect('/');
     return;
   }
+
   res.render('login');
 });
 
-router.get('/signup', (req, res) => {
-  if (req.session.loggedIn) {
-    res.redirect('/');
-    return;
-  }
-
-  res.render('signup');
-});
+// router.get('/', (req, res) => {
+//     res.render('homepage', {
+//         id: 1,
+//         Blog_url: 'https:// handlebarsjs.com/guide/',
+//         title: 'Handlebars Docs',
+//         createdAt: new Date(),
+//         vote_count: 10,
+//         comments: [{}, {}],
+//         user: {
+//             username: 'test_user'
+//         }
+//     });
+// });
 
 module.exports = router;

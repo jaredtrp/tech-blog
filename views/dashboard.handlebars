@@ -1,0 +1,31 @@
+<section class="card card-header text-dark bg-primary">
+    <h2>Create New Blog</h2>
+
+    <form class="new-blog-form">
+        <div>
+            <label for="blog-title">Title</label>
+            <input name="blog-title" type="text">
+        </div>
+        <div>
+            <label for="blog-text">Content</label>
+            <input name="blog-text" type="text">
+        </div>
+        <button type="submit" class="btn">Create</button>
+    </form>
+</section>
+
+{{#if blogs.length}}
+<section>
+    <h2 class="page-title">Your Blogs</h2>
+    <div>
+        {{#each blogs as |blog|}}
+        <div class="card card-header text-dark bg-primary">
+        <a href="/dashboard/edit/{{blog.id}}" class="edit-link btn log">Edit blog</a>
+        <p class="page-title">{{blog.title}}</p>
+        </div>
+        {{/each}}
+    </div>
+</section>
+{{/if}}
+
+<script src="/javascript/add-blog.js"></script>
