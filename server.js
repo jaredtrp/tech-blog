@@ -9,7 +9,7 @@ const helpers = require('./utils/helpers.js');
 const hbs = exphbs.create({ helpers });
 
 const sess = {
-  secret: process.env.SECRET,
+  secret: 'barley rye wheat',
   cookie: {},
   resave: false,
   saveUninitialized: true,
