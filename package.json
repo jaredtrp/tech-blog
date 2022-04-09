@@ -14,18 +14,18 @@
   "scripts": {
     "start": "node server.js"
   },
-  "name": "just-tech-news",
+  "name": "tech-blog",
   "version": "1.0.0",
   "main": "server.js",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/jaredtrp/just-tech-news.git"
+    "url": "git+https://github.com/jaredtrp/tech-blog.git"
   },
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/jaredtrp/just-tech-news/issues"
+    "url": "https://github.com/jaredtrp/tech-blog/issues"
   },
-  "homepage": "https://github.com/jaredtrp/just-tech-news#readme",
+  "homepage": "https://github.com/jaredtrp/tech-blog#readme",
   "description": ""
 }
