@@ -1,76 +1,42 @@
-const router = require('express').Router();
-const sequelize = require('../config/connection');
-const { Blog, User, Comment } = require('../models');
-const withAuth = require('../utils/auth');
+const router = require("express").Router();
+const { Post } = require("../models/");
+const withAuth = require("../utils/auth");
 
-router.get ('/', withAuth, (req, res) => {
-    Blog.findAll({
-        where: {
-            // user the ID from the session
-            user_id: req.session.user_id
-        },
-        attributes: [
-            'id',
-            'blog_text',
-            'title',
-            'createdAt',
-    ],
-    include: [
-      {
-        model: Comment,
-        attributes: ['id', 'comment_text', 'blog_id', 'user_id', 'createdAt'],
-        include: {
-          model: User,
-          attributes: ['username']
-        }
-      },
-      {
-        model: User,
-        attributes: ['username']
+router.get("/", withAuth, (req, res) => {
+    Post.findAll({
+      where: {
+        userId: req.session.userId
       }
-    ]
     })
-    .then(dbBlogData => {
-        // serialize data before passing to template
-        const blogs = dbBlogData.map(blog => blog.get({ plain: true }));
-        res.render('dashboard', { blogs, loggedIn: true });
+      .then(dbPostData => {
+        const posts = dbPostData.map((post) => post.get({ plain: true }));
+        
+        res.render("all-posts-admin", {
+          layout: "dashboard",
+          posts
+        });
       })
       .catch(err => {
         console.log(err);
-        res.status(500).json(err);
+        res.redirect("login");
       });
   });
 
-  router.get('/edit/:id', withAuth, (req, res) => {
-    Blog.findByPk(req.params.id, {
-      attributes: [
-        'id',
-        'blog_text',
-        'title',
-        'createdAt',
-      ],
-      include: [
-        {
-          model: Comment,
-          attributes: ['id', 'comment_text', 'blog_id', 'user_id', 'createdAt'],
-          include: {
-            model: User,
-            attributes: ['username']
-          }
-        },
-        {
-          model: User,
-          attributes: ['username']
-        }
-      ]
-    })
-      .then(dbBlogData => {
-        if (dbBlogData) {
-          const Blog = dbBlogData.get({ plain: true });
+  router.get("/new", withAuth, (req, res) => {
+    res.render("new-post", {
+      layout: "dashboard"
+    });
+  });
+  
+  router.get("/edit/:id", withAuth, (req, res) => {
+    Post.findByPk(req.params.id)
+      .then(dbPostData => {
+        if (dbPostData) {
+          const post = dbPostData.get({ plain: true });
           
-          res.render('edit-blog', {
-            Blog,
-            loggedIn: true
+          res.render("edit-post", {
+            layout: "dashboard",
+            post
           });
         } else {
           res.status(404).end();
@@ -80,5 +46,5 @@ router.get ('/', withAuth, (req, res) => {
         res.status(500).json(err);
       });
   });
-
+  
 module.exports = router;
