@@ -1,12 +1,49 @@
-const express = require('express');
-const routes = require('./controllers');
-const sequelize = require('./config/connection');
+// const express = require('express');
+// const routes = require('./controllers');
+// const sequelize = require('./config/connection');
+// const path = require('path');
+// const exphbs = require('express-handlebars');
+// const session = require('express-session');
+// const SequelizeStore = require('connect-session-sequelize')(session.Store);
+// const helpers = require('./utils/helpers.js');
+// const hbs = exphbs.create({ helpers });
+
+// const sess = {
+//   secret: 'barley rye wheat',
+//   cookie: {},
+//   resave: false,
+//   saveUninitialized: true,
+//   store: new SequelizeStore({
+//     db: sequelize,
+//   }),
+// };
+
+// const app = express();
+// const PORT = process.env.PORT || 3001;
+
+// app.use(express.json());
+// app.use(express.urlencoded({ extended: true }));
+// app.use(express.static(path.join(__dirname, 'public')));
+// app.engine('handlebars', hbs.engine);
+// app.set('view engine', 'handlebars');
+// app.use(session(sess));
+
+// app.use(routes);
+
+// sequelize.sync({ force: false }).then(() => {
+//   app.listen(PORT, () => console.log('Now listening'));
+// });
 const path = require('path');
-const exphbs = require('express-handlebars');
+const express = require('express');
 const session = require('express-session');
+const exphbs = require('express-handlebars');
+const helpers = require('./utils/helpers');
+
+const app = express();
+const PORT = process.env.PORT || 3001;
+
+const sequelize = require('./config/config');
 const SequelizeStore = require('connect-session-sequelize')(session.Store);
-const helpers = require('./utils/helpers.js');
-const hbs = exphbs.create({ helpers });
 
 const sess = {
   secret: 'barley rye wheat',
@@ -18,18 +55,20 @@ const sess = {
   }),
 };
 
-const app = express();
-const PORT = process.env.PORT || 3001;
-
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-app.use(express.static(path.join(__dirname, 'public')));
-app.engine('handlebars', hbs.engine);
-app.set('view engine', 'handlebars');
 app.use(session(sess));
 
-app.use(routes);
+const hbs = exphbs.create({ helpers });
 
-sequelize.sync({ force: false }).then(() => {
-  app.listen(PORT, () => console.log('Now listening'));
+app.engine('handlebars', hbs.engine);
+app.set('view engine', 'handlebars');
+
+app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
+app.use(express.static(path.join(__dirname, 'public')));
+
+app.use(require('./controllers/'));
+
+app.listen(PORT, () => {
+  console.log('Now listening');
+  sequelize.sync({ force: false });
 });
